@@ -24,7 +24,7 @@ python main.py
 ```
 ## Architecture 
 <p align="center">
-  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/star-track-architecture.png?raw=true">
+  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/new-architecture.png?raw=true">
 </p>
 
 ## Future features  

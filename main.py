@@ -2,15 +2,26 @@ import argparse
 from dotenv import load_dotenv
 from src.multion_utils import MultiOnUtils
 from src.mem0_utils import MemorySystem
+from src.time_utils import Time
 import csv
 
 load_dotenv()
 
-def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_mem0=False, use_neo4j_kg=False):
+def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=False, use_mem0=False, use_neo4j_kg=False):
     """
     Main function to scrape GitHub and LinkedIn data.
+
+    This function takes in a GitHub repository URL and several optional parameters:
+    max_stargazers: Maximum number of stargazers to scrape
+    scrape_linkedin: Whether to scrape LinkedIn profiles
+    use_mem0: Whether to use Mem0 memory system
+    use_neo4j_kg: Whether to use Neo4j knowledge graph
+    The function scrapes the repository and its stargazers, then scrapes GitHub data for each stargazer. If scrape_linkedin is True, it also scrapes LinkedIn data for users with LinkedIn URLs. The function then writes the collected data to a CSV file.
+
+    It prints various debugging messages throughout its execution.
     """
-    multion_scraper = MultiOnUtils()
+    multion_scraper = MultiOnUtils(use_agentops=use_agentops)
+    agent_name = "StarTracker"
 
     # Step 1: Scrape repo and stargazers
     print(f"Scraping repo: {repo_url}")
@@ -58,26 +69,40 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_mem0=False, u
     if use_mem0:
         memory_system = MemorySystem()
         memory = memory_system.get_memory()
-        memory.reset()
+        # memory.reset()
 
         # Step 4a Memorize stargazers of each repository on a Knowledge Graph
         if use_neo4j_kg:
+            print(f"Updating knowledge graph")
             repositories = [repo_url]
             # Iterate over the list of repositories
 
             for repository in repositories:
                 print(f"Upserting repository: {repository}")
+                result_repository = memory.add(
+                    f"The github user: {stargazer.user_id} starred the repository: {repository}",
+                    user_id=None,
+                    agent_id=agent_name,
+                    run_id=str(Time()),
+                    metadata={'app_id': repository},
+                )
 
                 # Iterate over the list of usernames for each repository
                 for stargazer in stargazers:
                     print(f"  Upserting username: {stargazer.user_id}")
 
-                    result = memory.add(f"The github user: {stargazer.user_id} starred the repository: {repository}", user_id=stargazer.user_id)
+                    result_stargazer = memory.add(
+                        f"The github user: {stargazer.user_id} starred the repository: {repository}",
+                        user_id=stargazer.user_id,
+                        agent_id=agent_name,
+                        run_id=str(Time()),
+                        metadata={'app_id': repository},
+                    )
 
     # Step 5 Combine data and write to CSV
     print(f"Writing stargazers data to CSV. Number of GitHub users to write: {len(github_user_data)}")
 
-    csv_filename = f"data/Stargazers_of_{repo.description.replace(' ', '_')[:30]}__.csv"
+    csv_filename = f"data/Stargazers_of_{repo.description.replace(' ', '_')[:30]}__{str(Time())}.csv"
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
         field_names = ['username', 'name', 'location', 'github_followers', 'linkedin_headline', 'current_position',
                       'linkedin_followers']
@@ -110,13 +135,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape GitHub and LinkedIn data for repository stargazers.")
     parser.add_argument("repo_url", help="URL of the GitHub repository to scrape")
     parser.add_argument("--max-stargazers", type=int, help="Maximum number of stargazers to scrape")
-    parser.add_argument("--with-linkedin", action="store_true", default=False,
+    parser.add_argument("-li","--with-linkedin", action="store_true", default=False,
                         help="Scrape LinkedIn profiles")
-    parser.add_argument("--with-mem0", action="store_true", default=False,
+    parser.add_argument("-aops","--with-agentops", action="store_true", default=False,
+                        help="Use Agentops for tracking and reporting agents' actions")
+    parser.add_argument("-mem0", "--with-mem0", action="store_true", default=False,
                         help="Option to include memory usage for scraping")
-    parser.add_argument("--with-neo4j-kg", action="store_true", default=False,
-                        help="Option to use Neo4j knowledge graph")
+    parser.add_argument("-kg", "--with-neo4j-kg", action="store_true", default=False,
+                        help="Option to use Neo4j knowledge graph. Requires --with-mem0")
 
     args = parser.parse_args()
+    if args.with_neo4j_kg and not args.with_mem0:
+        parser.error("--with-neo4j-kg requires --with-mem0 to be present")
 
-    main(args.repo_url, args.max_stargazers, args.with_linkedin, args.with_mem0, args.with_neo4j_kg)
+    main(args.repo_url, args.max_stargazers, args.with_linkedin, args.with_agentops, args.with_mem0, args.with_neo4j_kg)

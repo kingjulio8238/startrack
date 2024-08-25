@@ -2,7 +2,7 @@
 Track who stars your repository 👀
 
 <p align="center">
-  <img alt="llama_track" src="https://github.com/kingjulio8238/startrack/blob/main/src/llama-track.png?raw=true">
+  <img alt="llama_track" src="https://github.com/kingjulio8238/startrack/blob/main/assets/llama-track.png?raw=true">
 </p>
 
 ## Quickstart 🏁
@@ -71,7 +71,7 @@ ls -t data/* | tail -1 | xargs less
 
 ## Architecture 
 <p align="center">
-  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/src/architecture-final.png?raw=true">
+  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/assets/architecture-final.png?raw=true">
 </p>
 
 ## Future features  
@@ -82,7 +82,7 @@ ls -t data/* | tail -1 | xargs less
 - Advanced visualizations
 
 <p align="center">
-  <img alt="coming_soon" src="https://github.com/kingjulio8238/startrack/blob/main/src/coming-soon.png?raw=true">
+  <img alt="coming_soon" src="https://github.com/kingjulio8238/startrack/blob/main/assets/coming-soon.png?raw=true">
 </p>
 
 

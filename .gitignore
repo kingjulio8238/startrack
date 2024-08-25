@@ -26,3 +26,6 @@ ehthumbs.db
 
 # env file
 .env
+
+# Data files
+*data/

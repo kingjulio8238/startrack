@@ -147,7 +147,12 @@ class MultiOnUtils:
             full_page=True,
         )
         print(f"Stargazers scrape data: {retrieve_response.data}")
-        stargazers = [StargazerData(user_id=user.get('username', '')) for user in retrieve_response.data]
+        stargazers = []
+        if len(retrieve_response.data) > 0:
+            stargazers = [StargazerData(user_id=user.get('username', '')) for user in retrieve_response.data]
+        else:
+            print("Did not scrape any users. Retry running the script or debug MultiOn retriever at:\nhttps://docs.multion.ai/api-reference/autonomous-api-reference/retrieve")
         print(f"Number of stargazers scraped: {len(stargazers)}")
+
         return stargazers
 

@@ -17,16 +17,29 @@ cd startrack
 
 ### Install python dependencies: 
 ```
+python3 -m venv venv
+source venv/bin/activate
+
 pip install -r requirements.txt
 ```
 ### Gain insights 
 ```
-python main.py
+python main.py https://github.com/kingjulio8238/startrack --with-linkedin
+
+# See help for more options
+python main.py --help
 ```
 ### Visualize stargazers 
 ```
 python dataviz.py
 ```
+
+### List CSV files and preview the most recent one 
+```
+ls data/*
+ls -t data/* | tail -1 | xargs less
+```
+
 ## Architecture 
 <p align="center">
   <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/architecture-final.png?raw=true">

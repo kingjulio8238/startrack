@@ -33,13 +33,16 @@ class LinkedInData:
 
 
 class MultiOnUtils:
-    def __init__(self):
-        self.multion_api_key = os.environ.get(
-            "MULTION_API_KEY")  # Get your API key from https://app.multion.ai/api-keys
-        self.agentops_api_key = os.environ.get(
-            "AGENTOPS_API_KEY")  # Get your API key from https://app.agentops.ai/settings/projects
+    def __init__(self, use_agentops: bool = False):
+        self.multion_api_key = os.environ.get("MULTION_API_KEY")
         if not self.multion_api_key:
-            raise ValueError("MULTION_API_KEY is not set in .env variables")
+            raise ValueError("MULTION_API_KEY is not set in .env variables\nGet your API key from https://app.multion.ai/api-keys")
+        if use_agentops:
+            self.agentops_api_key = os.environ.get("AGENTOPS_API_KEY")
+            if not self.agentops_api_key:
+                raise ValueError("AGENTOPS_API_KEY is not set in .env variables\nGet your API key from https://app.agentops.ai/settings/projects")
+        else:
+            self.agentops_api_key=None
 
     def scrape_github(self, user = "areibman") -> GitHubUserData:
         client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
@@ -147,7 +150,12 @@ class MultiOnUtils:
             full_page=True,
         )
         print(f"Stargazers scrape data: {retrieve_response.data}")
-        stargazers = [StargazerData(user_id=user.get('username', '')) for user in retrieve_response.data]
+        stargazers = []
+        if len(retrieve_response.data) > 0:
+            stargazers = [StargazerData(user_id=user.get('username', '')) for user in retrieve_response.data]
+        else:
+            print("Did not scrape any users. Retry running the script or debug MultiOn retriever at:\nhttps://docs.multion.ai/api-reference/autonomous-api-reference/retrieve")
         print(f"Number of stargazers scraped: {len(stargazers)}")
+
         return stargazers
 

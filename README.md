@@ -2,7 +2,7 @@
 Track who stars your repository 👀
 
 <p align="center">
-  <img alt="llama_track" src="https://github.com/kingjulio8238/startrack/blob/main/llama-track.png?raw=true">
+  <img alt="llama_track" src="https://github.com/kingjulio8238/startrack/blob/main/src/llama-track.png?raw=true">
 </p>
 
 ## Quickstart 🏁
@@ -17,19 +17,61 @@ cd startrack
 
 ### Install python dependencies: 
 ```
+python3 -m venv venv
+source venv/bin/activate
+
 pip install -r requirements.txt
 ```
-### Gain insights 
+
+### Setup necessary API keys and local variables
 ```
-python main.py
+cp .env_local .env
+vim .env_local
+
+# You will need to provide
+MULTION_API_KEY = '...'
+
+# Depending on your use case, you may also need other API keys
 ```
+
+### Track your stars 
+```
+python main.py https://github.com/kingjulio8238/startrack --with-linkedin
+
+# See help for more options and use cases
+python main.py --help
+# usage: main.py [-h] [--max-stargazers MAX_STARGAZERS] [-li] [-aops] [-mem0] [-kg] repo_url
+# 
+# Scrape GitHub and LinkedIn data for repository stargazers.
+# 
+# positional arguments:
+#   repo_url              URL of the GitHub repository to scrape
+# 
+# options:
+#   -h, --help            show this help message and exit
+#   --max-stargazers MAX_STARGAZERS
+#                         Maximum number of stargazers to scrape
+#   -aops, --with-agentops
+#                         Use Agentops for tracking and reporting agents' actions
+#   -li, --with-linkedin  Scrape LinkedIn profiles
+#   -mem0, --with-mem0    Option to include memory usage for scraping
+#   -kg, --with-neo4j-kg  Option to use Neo4j knowledge graph. Requires --with-mem0
+```
+
 ### Visualize stargazers 
 ```
 python dataviz.py
 ```
+
+### List CSV files with stargazers and preview the most recent ones 
+```
+ls data/*
+ls -t data/* | tail -1 | xargs less
+```
+
 ## Architecture 
 <p align="center">
-  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/architecture-final.png?raw=true">
+  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/src/architecture-final.png?raw=true">
 </p>
 
 ## Future features  
@@ -40,7 +82,7 @@ python dataviz.py
 - Advanced visualizations
 
 <p align="center">
-  <img alt="coming_soon" src="https://github.com/kingjulio8238/startrack/blob/main/coming-soon.png?raw=true">
+  <img alt="coming_soon" src="https://github.com/kingjulio8238/startrack/blob/main/src/coming-soon.png?raw=true">
 </p>
 
 

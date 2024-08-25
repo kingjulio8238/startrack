@@ -10,7 +10,7 @@ Track who stars your repository 👀
 ### Clone Star Track 
 
 ```
-git clone git@github.com:kingjulio8238/startrack.git
+git clone https://github.com/kingjulio8238/startrack.git
 cd startrack
 ```
 

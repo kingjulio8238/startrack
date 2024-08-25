@@ -21,6 +21,7 @@ class GitHubUserData:
     num_followers: int
     location: str
     linkedin_url: Optional[str]
+    twitter_url: Optional[str]
 
 @dataclass
 class LinkedInData:
@@ -51,7 +52,7 @@ class MultiOnUtils:
         retrieve_response = client.retrieve(
             session_id=session_id,
             cmd="Get name, location, number of repositories, count of contributions in the last year, followers and following count.",
-            fields=["name", "location", "pulbic_repositories", "last_year_contributions_count",
+            fields=["name", "location", "public_repositories", "last_year_contributions_count",
                     "github_followers_count", "github_following_count"],
             scroll_to_bottom=False,
             render_js=True

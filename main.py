@@ -1,5 +1,7 @@
-from multion_utils import MultiOnUtils
+import dotenv
 
+from multion_utils import MultiOnUtils
+dotenv.load_dotenv()
 
 def main():
     """
@@ -17,7 +19,7 @@ def main():
     multionscrapper = MultiOnUtils()
     
     # Step 1: Scrape stargazers
-    repo_url = "https://github.com/example/repo"
+    repo_url = "https://github.com/markmbain/aius"
     repo = multionscrapper.scrape_repo(repo_url)
     print(f"Repo {repo}")
     stargazers = multionscrapper.scrape_stargazers(repo_url)
@@ -31,12 +33,12 @@ def main():
     print(f"Scraped GitHub data for {len(github_user_data)} users")
     
     # Step 3: Scrape LinkedIn data for users with LinkedIn URLs
-    linkedin_data = []
-    for user in github_user_data:
-        if user.linkedin_url:
-            linkedin_profile = multionscrapper.scrape_linkedin(user.linkedin_url)
-            linkedin_data.append(linkedin_profile)
-    print(f"Scraped LinkedIn data for {len(linkedin_data)} users")
+    # linkedin_data = []
+    # for user in github_user_data:
+    #     if user.linkedin_url:
+    #         linkedin_profile = multionscrapper.scrape_linkedin(user.linkedin_url)
+    #         linkedin_data.append(linkedin_profile)
+    # print(f"Scraped LinkedIn data for {len(linkedin_data)} users")
     
     # Print or process the collected data as needed
     print("GitHub User Data:")
@@ -44,8 +46,8 @@ def main():
         print(user)
     
     print("\nLinkedIn Data:")
-    for profile in linkedin_data:
-        print(profile)
+    # for profile in linkedin_data:
+    #     print(profile)
     
     print("Step 1 completed")
 

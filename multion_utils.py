@@ -39,29 +39,35 @@ class MultiOnUtils:
         if not self.multion_api_key:
             raise ValueError("MULTION_API_KEY is not set in .env variables")
 
-    def scrape_github(self, user = "areibman") -> RepoData:
-        client = MultiOn(api_key=self.multion_api_key)
-        # client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
+    def scrape_github(self, user = "areibman") -> GitHubUserData:
+        client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
         create_response = client.sessions.create(
             url=f"https://github.com/{user}",
-            local=True
+            local=True,
+
         )
         print("scraping")
 
         session_id = create_response.session_id
         retrieve_response = client.retrieve(
             session_id=session_id,
-            cmd="Get name, location, number of repositories, count of contributions in the last year, followers and following count.",
+            cmd="Get name, location, number of repositories, count of contributions in the last year, followers, following count, linkedin url and github url",
             fields=["name", "location", "public_repositories", "last_year_contributions_count",
-                    "github_followers_count", "github_following_count"],
+                    "github_followers_count", "github_following_count", "linkedin_url", "github_url"],
             scroll_to_bottom=False,
-            render_js=True
+            render_js=True,
         )
 
-        print(retrieve_response.data)
-        data = retrieve_response.data
+        print(f"Raw data: {retrieve_response.data}")
+        data = retrieve_response.data[0] if retrieve_response.data else {}
 
-        return data
+        return GitHubUserData(
+            name=data.get("name", ""),
+            num_followers=int(data.get("github_followers_count", 0) or 0),
+            location=data.get("location", ""),
+            linkedin_url=data.get("linkedin_url"),
+            twitter_url=data.get("twitter_url")
+        )
 
     def scrape_linkedin(self, link = "https://www.linkedin.com/in/alex-reibman-67951589") -> LinkedInData:
         client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
@@ -108,6 +114,7 @@ class MultiOnUtils:
             cmd="Get description and number of repo stars",
             fields=["description", "number_of_stars"],
             render_js=True,
+            max_items=10
         )
 
         print(f"Raw data: {retrieve_response.data}")

@@ -2,7 +2,7 @@
 Track who stars your repository 👀
 
 <p align="center">
-  <img alt="llama_track" src="diagrams/memary-logo-latest.png">
+  <img alt="llama_track" src="https://github.com/kingjulio8238/startrack/blob/main/llama-track.png?raw=true">
 </p>
 
 ## Quickstart 🏁
@@ -24,7 +24,7 @@ python main.py
 ```
 ## Architecture 
 <p align="center">
-  <img alt="star_track" src="diagrams/memary-logo-latest.png">
+  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/star-track-architecture.png?raw=true">
 </p>
 
 ## Future features  
@@ -33,6 +33,11 @@ python main.py
 - API integration 
 - Improve graph connections 
 - Advanced visualizations
+
+<p align="center">
+  <img alt="coming_soon" src="https://github.com/kingjulio8238/startrack/blob/main/coming-soon.png?raw=true">
+</p>
+
 
 Go contribute 🫡🚢
 

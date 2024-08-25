@@ -13,7 +13,7 @@ class RepoData:
 
 @dataclass
 class StargazerData:
-    user_id: List[str]
+    user_id: str
 
 @dataclass
 class GitHubUserData:

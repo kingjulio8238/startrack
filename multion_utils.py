@@ -29,6 +29,8 @@ class LinkedInData:
     location: str
     curr_job: str
     num_followers: int
+    headline: str
+
 
 class MultiOnUtils:
     def __init__(self):
@@ -90,16 +92,24 @@ class MultiOnUtils:
 
         retrieve_response = client.retrieve(
             session_id=session_id,
-            cmd="Get name, headline, location, current position, profile URL, and image URL.",
-            fields=["name", "headline", "location", "current_position", "profile_url", "image_url"],
-            scroll_to_bottom=True,
-            render_js=True
+            cmd="Get name, headline, location, current position, profile URL and number of followers",
+            fields=["name", "headline", "location", "current_position", "profile_url", "num_followers"],
+            scroll_to_bottom=False,
+            render_js=True,
+            full_page=True,
+            local=True
         )
 
         print(retrieve_response.data[0])
-        data = retrieve_response.data[0]
+        data = retrieve_response.data[0] if retrieve_response.data else {}
+        print(f"Raw LinkedIn data: {data}")
 
-        return data
+        return LinkedInData(
+            name=data.get("name", ""),
+            location=data.get("location", ""),
+            curr_job=data.get("current_position", ""),
+            num_followers=int(data.get("num_followers", 0) or 0),
+            headline = data.get("headline", ""))
 
     def scrape_repo(self, repo_url: str) -> RepoData:
         client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)

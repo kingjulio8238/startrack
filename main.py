@@ -2,6 +2,7 @@ import argparse
 from dotenv import load_dotenv
 from multion_utils import MultiOnUtils
 from mem0_utils import MemorySystem
+import csv
 
 load_dotenv()
 
@@ -24,17 +25,19 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=True):
     for stargazer in stargazers:
         user_data = multionscrapper.scrape_github(stargazer.user_id)
         github_user_data.append(user_data)
+    github_user_data = list({user.name: user for user in github_user_data}.values())
     print(f"Scraped GitHub data for {len(github_user_data)} users")
     
     # Step 3: Scrape LinkedIn data for users with LinkedIn URLs
-    linkedin_data = []
+    linkedin_data = {}
     if scrape_linkedin:
         for user in github_user_data:
             if user.linkedin_url:
                 linkedin_profile = multionscrapper.scrape_linkedin(user.linkedin_url)
-                linkedin_data.append(linkedin_profile)
-        print(f"Scraped LinkedIn data for {len(linkedin_data)} users")
-    
+                if linkedin_profile.name:  # Only add if we got a valid name
+                    linkedin_data[user.name] = linkedin_profile
+    print(f"Scraped LinkedIn data for {len(linkedin_data)} users")
+
     # Print or process the collected data as needed
     print("\nGitHub User Data:")
     for user in github_user_data:
@@ -42,9 +45,9 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=True):
     
     if scrape_linkedin:
         print("\nLinkedIn Data:")
-        for profile in linkedin_data:
-            print(profile)
-    
+        for name, profile in linkedin_data.items():
+            print(f"{name}: {profile}")
+
     print("\nScraping completed")
 
 
@@ -57,8 +60,8 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=True):
     """
     Memorize stargazers of each repository
     """
-    repositories = ["mem0ai/mem0", "MULTI-ON/multion-python"]
-    usernames = ["userA", "userB"]
+    repositories = [repo_url]
+    usernames = [stargazers]
     # Iterate over the list of repositories
 
     for repository in repositories:
@@ -69,26 +72,35 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=True):
             result = memory.add(f"The github user: {username} starred the repository: {repository}", user_id=username)
 
     # Combine data and write to CSV
+    print(f"Number of GitHub users to write: {len(github_user_data)}")
+
     csv_filename = f"{repo.description.replace(' ', '_')[:30]}_users.csv"
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['username', 'name', 'location', 'github_followers', 'linkedin_headline', 'current_position', 'linkedin_followers']
+        fieldnames = ['username', 'name', 'location', 'github_followers', 'linkedin_headline', 'current_position',
+                      'linkedin_followers']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        
+
         writer.writeheader()
+        row_count = 0
         for user in github_user_data:
-            linkedin_profile = linkedin_data.get(user.name, {})
-            row = {
-                'username': user.name,
-                'name': linkedin_profile.get('name', user.name),
-                'location': linkedin_profile.get('location') or user.location or None,
-                'github_followers': user.num_followers,
-                'linkedin_headline': linkedin_profile.get('headline', None),
-                'current_position': linkedin_profile.get('current_position', None),
-                'linkedin_followers': linkedin_profile.get('num_followers', None)
-            }
-            writer.writerow(row)
-    
-    print(f"\nData written to {csv_filename}")
+            try:
+                linkedin_profile = linkedin_data.get(user.name)
+                row = {
+                    'username': user.name,
+                    'name': linkedin_profile.name if linkedin_profile else user.name,
+                    'location': linkedin_profile.location if linkedin_profile else (user.location or ''),
+                    'github_followers': user.num_followers,
+                    'linkedin_headline': getattr(linkedin_profile, 'headline', ''),
+                    'current_position': getattr(linkedin_profile, 'curr_job', ''),
+                    'linkedin_followers': getattr(linkedin_profile, 'num_followers', '')
+                }
+                writer.writerow(row)
+                row_count += 1
+                print(f"Writing row {row_count}: {row}")
+            except Exception as e:
+                print(f"Error writing row for user {user.name}: {str(e)}")
+
+    print(f"\nTotal rows written to {csv_filename}: {row_count}")
 
 
 if __name__ == "__main__":

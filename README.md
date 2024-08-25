@@ -6,6 +6,7 @@ Track who stars your repository 👀
 </p>
 
 ## Quickstart 🏁
+[Demo](https://www.loom.com/share/7027cd1849694349b1114d6f79904e9a?sid=224f5b20-14b0-4f89-9ba6-3604c08befa2)
 
 ### Clone Star Track 
 

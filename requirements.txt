@@ -1,3 +1,6 @@
 multion
 python-dotenv
 mem0ai
+akkio 
+pandas 
+plotly

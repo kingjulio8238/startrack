@@ -63,7 +63,7 @@ class MultiOnUtils:
 
         return data
 
-    def scrape_linkedin(self, user = "alex-reibman-67951589") -> LinkedInData:
+    def scrape_linkedin(self, link = "https://www.linkedin.com/in/alex-reibman-67951589") -> LinkedInData:
         client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
         create_response = client.sessions.create(
             url="https://linkedin.com",
@@ -73,7 +73,7 @@ class MultiOnUtils:
         session_id = create_response.session_id
         status = "CONTINUE"
 
-        linkedin_url = f"https://www.linkedin.com/in/{user}"
+        linkedin_url = f"{link}"
 
         while status == "CONTINUE":
             step_response = client.sessions.step(

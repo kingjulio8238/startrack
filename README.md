@@ -24,7 +24,7 @@ python main.py
 ```
 ## Architecture 
 <p align="center">
-  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/new-architecture.png?raw=true">
+  <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/architecture-final.png?raw=true">
 </p>
 
 ## Future features  
@@ -42,4 +42,4 @@ python main.py
 Go contribute 🫡🚢
 
 ## Initial contributors 
-Julian Saks, Teo Feliu, Jeremiasz Jaworski, Mark Bain
+[Julian Saks](https://www.linkedin.com/in/juliansaks/), [Teo Feliu](http://linkedin.com/in/teofeliu), [Jeremiasz Jaworski](https://www.linkedin.com/in/jeremiasz-j), [Mark Bain](https://www.linkedin.com/in/markmbain/)

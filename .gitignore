@@ -1,0 +1,28 @@
+# PyCharm
+.idea/
+*.iml
+ pycharm*
+ .idea/*.xml
+.idea/*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Install dependencies
+*.pyc
+
+# Local settings
+*.local_settings.py
+
+# Virtualenv
+*venv/
+
+# System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# env file
+.env

@@ -1,3 +1,6 @@
+from multion_utils import MultiOnUtils
+
+
 def main():
     """
     Step 1: User input
@@ -14,7 +17,9 @@ def main():
     multionscrapper = MultiOnUtils()
     
     # Step 1: Scrape stargazers
-    repo_url = "https://github.com/example/repo"  # Replace with actual repo URL
+    repo_url = "https://github.com/example/repo"
+    repo = multionscrapper.scrape_repo(repo_url)
+    print(f"Repo {repo}")
     stargazers = multionscrapper.scrape_stargazers(repo_url)
     print(f"Scraped {len(stargazers)} stargazers")
     

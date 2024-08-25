@@ -96,12 +96,41 @@ class MultiOnUtils:
         return data
 
     def scrape_repo(self, repo_url: str) -> RepoData:
-        # TODO: Implement MultiOn scraping logic
-        # This method should return a RepoData object
-        pass
+        client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
+        create_response = client.sessions.create(
+            url=repo_url,
+            local=True
+        )
+
+        session_id = create_response.session_id
+        retrieve_response = client.retrieve(
+            session_id=session_id,
+            cmd="Get description and number of repo stars",
+            fields=["description", "number_of_stars"],
+            render_js=True,
+        )
+
+        print(f"Raw data: {retrieve_response.data}")
+        data = retrieve_response.data[0] if retrieve_response.data else {}
+
+        return RepoData(
+            description=data.get("description", ""),
+            num_stars=int(data.get("number_of_stars", 0))
+        )
 
     def scrape_stargazers(self, repo_url: str) -> List[StargazerData]:
-        # TODO: Implement MultiOn scraping logic
-        # This method should return a list of StargazerData objects
-        pass
+        client = MultiOn(api_key=self.multion_api_key)
+        create_response = client.sessions.create(url=f"{repo_url}/stargazers", local=True)
+        retrieve_response = client.retrieve(
+            session_id=create_response.session_id,
+            cmd="Get username of all users",
+            fields=["username"],
+            render_js=True,
+            scroll_to_bottom=False,
+            full_page=True,
+        )
+        print(f"Stargazers scrape data: {retrieve_response.data}")
+        stargazers = [StargazerData(user_id=user.get('username', '')) for user in retrieve_response.data]
+        print(f"Number of stargazers scraped: {len(stargazers)}")
+        return stargazers
 

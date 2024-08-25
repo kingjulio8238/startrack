@@ -1,5 +1,6 @@
 import argparse
 from multion_utils import MultiOnUtils
+from mem0_utils import MemorySystem
 
 def main(repo_url, max_stargazers=None, scrape_linkedin=True):
     """
@@ -42,6 +43,28 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=True):
             print(profile)
     
     print("\nScraping completed")
+
+    """
+    Step 2 Initialize GraphMemory
+    """
+    memory_system = MemorySystem()
+    memory = memory_system.get_memory()
+
+    """
+    Step 2 Memorize
+    """
+    # repositories = ["mem0ai/mem0", "MULTI-ON/multion-python"]
+    # usernames = ["userA", "userB"]
+    # # Iterate over the list of repositories
+    # for repository in repositories:
+    #     print(f"Repository: {repository}")
+    #     # Iterate over the list of usernames for each repository
+    #     for username in usernames:
+    #         print(f"  Username: {username}")
+    #         memory.add(f"This repository is starred by this user: {username}", user_id=repository)
+
+    result = memory.add("Likes to play cricket on weekends", user_id="alice", metadata={"category": "hobbies"})
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape GitHub and LinkedIn data for repository stargazers.")

@@ -68,6 +68,28 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=True):
             print(f"  Username: {username}")
             result = memory.add(f"The github user: {username} starred the repository: {repository}", user_id=username)
 
+    # Combine data and write to CSV
+    csv_filename = f"{repo.description.replace(' ', '_')[:30]}_users.csv"
+    with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['username', 'name', 'location', 'github_followers', 'linkedin_headline', 'current_position', 'linkedin_followers']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        writer.writeheader()
+        for user in github_user_data:
+            linkedin_profile = linkedin_data.get(user.name, {})
+            row = {
+                'username': user.name,
+                'name': linkedin_profile.get('name', user.name),
+                'location': linkedin_profile.get('location') or user.location or None,
+                'github_followers': user.num_followers,
+                'linkedin_headline': linkedin_profile.get('headline', None),
+                'current_position': linkedin_profile.get('current_position', None),
+                'linkedin_followers': linkedin_profile.get('num_followers', None)
+            }
+            writer.writerow(row)
+    
+    print(f"\nData written to {csv_filename}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape GitHub and LinkedIn data for repository stargazers.")

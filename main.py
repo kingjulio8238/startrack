@@ -1,28 +1,18 @@
-import dotenv
-
+import argparse
 from multion_utils import MultiOnUtils
-dotenv.load_dotenv()
 
-def main():
+def main(repo_url, max_stargazers=None, scrape_linkedin=True):
     """
-    Step 1: User input
-    Agent role: Listen to the user intent and preferences
-    Tools: MultiOn, AgentOps, Mem0
-    1. We receive an intent prompt from a user
-    2. We assume a use case where the user wants to learn about github repositories and their users, and user profiles
-    3. We use MultiOn to access private (behind auth) data of the human-in-control user
-    4. MultiOn pulls data from intended sources, like Github, LinkedIn, ...
-    5. We store accessed data/memories in Python and Mem0
-    Input: text prompt
-    Output: Mem0 data
+    Main function to scrape GitHub and LinkedIn data.
     """
     multionscrapper = MultiOnUtils()
     
-    # Step 1: Scrape stargazers
-    repo_url = "https://github.com/markmbain/aius"
+    # Step 1: Scrape repo and stargazers
     repo = multionscrapper.scrape_repo(repo_url)
-    print(f"Repo {repo}")
+    print(f"Repo: {repo}")
     stargazers = multionscrapper.scrape_stargazers(repo_url)
+    if max_stargazers:
+        stargazers = stargazers[:max_stargazers]
     print(f"Scraped {len(stargazers)} stargazers")
     
     # Step 2: Scrape GitHub data for each stargazer
@@ -33,25 +23,32 @@ def main():
     print(f"Scraped GitHub data for {len(github_user_data)} users")
     
     # Step 3: Scrape LinkedIn data for users with LinkedIn URLs
-    # linkedin_data = []
-    # for user in github_user_data:
-    #     if user.linkedin_url:
-    #         linkedin_profile = multionscrapper.scrape_linkedin(user.linkedin_url)
-    #         linkedin_data.append(linkedin_profile)
-    # print(f"Scraped LinkedIn data for {len(linkedin_data)} users")
+    linkedin_data = []
+    if scrape_linkedin:
+        for user in github_user_data:
+            if user.linkedin_url:
+                linkedin_profile = multionscrapper.scrape_linkedin(user.linkedin_url)
+                linkedin_data.append(linkedin_profile)
+        print(f"Scraped LinkedIn data for {len(linkedin_data)} users")
     
     # Print or process the collected data as needed
-    print("GitHub User Data:")
+    print("\nGitHub User Data:")
     for user in github_user_data:
         print(user)
     
-    print("\nLinkedIn Data:")
-    # for profile in linkedin_data:
-    #     print(profile)
+    if scrape_linkedin:
+        print("\nLinkedIn Data:")
+        for profile in linkedin_data:
+            print(profile)
     
-    print("Step 1 completed")
-
-    # Here you might want to add code to store the data in Mem0 or process it further
+    print("\nScraping completed")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Scrape GitHub and LinkedIn data for repository stargazers.")
+    parser.add_argument("repo_url", help="URL of the GitHub repository to scrape")
+    parser.add_argument("--max-stargazers", type=int, help="Maximum number of stargazers to scrape")
+    parser.add_argument("--no-linkedin", action="store_true", help="Skip LinkedIn scraping")
+    
+    args = parser.parse_args()
+    
+    main(args.repo_url, args.max_stargazers, not args.no_linkedin)

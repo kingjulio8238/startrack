@@ -1,0 +1,3 @@
+akkio 
+pandas 
+plotly

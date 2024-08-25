@@ -22,6 +22,10 @@ pip install -r requirements.txt
 ```
 python main.py
 ```
+### Visualize stargazers 
+```
+python dataviz.py
+```
 ## Architecture 
 <p align="center">
   <img alt="star_track_architecture" src="https://github.com/kingjulio8238/startrack/blob/main/architecture-final.png?raw=true">

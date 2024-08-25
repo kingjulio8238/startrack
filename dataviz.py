@@ -6,24 +6,42 @@ from plotly.subplots import make_subplots
 csv_file_path = 'sample_data.csv'
 df = pd.read_csv(csv_file_path)
 
-#Create contact table 
 def create_contact_table(df):
     fig = go.Figure(data=[go.Table(
-        header=dict(values=['<b>Email</b>', '<b>Twitter</b>', '<b>LinkedIn</b>'],
-                    fill_color='#4A90E2',
-                    align='center',
-                    font=dict(color='white', size=12)),
-        cells=dict(values=[
-            [f'<a href="mailto:{email}">{email}</a>' for email in df.Email],
-            [f'{url}' for url in df.Twitter],
-            [f'{url}' for url in df.LinkedIn]
-        ],
-        fill_color=['white', 'white'],
-        align='left',
-        font=dict(color='#333', size=11)))
-    ])
-    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=400, width=800)
+        header=dict(
+            values=['<b>Email</b>', '<b>Twitter</b>', '<b>LinkedIn</b>'],
+            fill_color='#4285f4',
+            align='center',
+            font=dict(color='white', size=14),
+            height=40
+        ),
+        cells=dict(
+            values=[
+                [f'<a href="mailto:{email}">{email}</a>' for email in df.Email],
+                [f'{url}' for url in df.Twitter],
+                [f'{url}' for url in df.LinkedIn],
+            ],
+            fill_color=['white', '#f8f9fa'],
+            align=['left', 'left', 'left', 'left'],
+            font=dict(color='#666', size=12),
+            height=30
+        )
+    )])
+    
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=50),
+        height=600,  # Increased height to accommodate more rows
+        width=1000   # Adjusted width for the four columns
+    )
     return fig
+    
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=50),
+        height=400,
+        width=1000  # Increased width to accommodate more columns
+    )
+    return fig
+
 
 
 #Create map 

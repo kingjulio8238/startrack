@@ -9,7 +9,7 @@ df = pd.read_csv(csv_file_path)
 def create_contact_table(df):
     fig = go.Figure(data=[go.Table(
         header=dict(
-            values=['<b>Email</b>', '<b>Twitter</b>', '<b>LinkedIn</b>'],
+            values=['<b>Stargazer</b>', '<b>Current position</b>', '<b>LinkedIn</b>'],
             fill_color='#4285f4',
             align='center',
             font=dict(color='white', size=14),
@@ -17,9 +17,10 @@ def create_contact_table(df):
         ),
         cells=dict(
             values=[
-                [f'<a href="mailto:{email}">{email}</a>' for email in df.Email],
-                [f'{url}' for url in df.Twitter],
-                [f'{url}' for url in df.LinkedIn],
+                [f'{name}' for name in df.name],
+                # [f'<a href="mailto:{email}">{name}</a>' for name in df.name],
+                [f'{current_position}' for current_position in df.current_position],
+                [f'{url}' for url in df.linkedin],
             ],
             fill_color=['white', '#f8f9fa'],
             align=['left', 'left', 'left', 'left'],
@@ -46,8 +47,8 @@ def create_contact_table(df):
 
 #Create map 
 def create_location_map(df):
-    fig = px.scatter_geo(df, locations='Location', locationmode='country names', 
-                         hover_name='Email', projection='natural earth',
+    fig = px.scatter_geo(df, locations='location', locationmode='country names',
+                         hover_name='email', projection='natural earth',
                          color_discrete_sequence=['#4A90E2'])
     fig.update_geos(showcoastlines=True, coastlinecolor="RebeccaPurple", 
                     showland=True, landcolor="LightGreen",
@@ -177,7 +178,7 @@ config = {'displayModeBar': False}
 plot_div = combined_fig.to_html(full_html=False, include_plotlyjs='cdn', config=config)
 
 # Write the custom HTML to a file
-with open("combined_visualization.html", "w") as f:
+with open("data/combined_visualization.html", "w") as f:
     f.write(custom_html)
 
 #success message 

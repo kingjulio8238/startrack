@@ -10,13 +10,13 @@ Track who stars your repository 👀
 
 ### Clone Star Track 
 
-```
+```bash
 git clone https://github.com/kingjulio8238/startrack.git
 cd startrack
 ```
 
 ### Install python dependencies: 
-```
+```bash
 python3 -m venv venv
 source venv/bin/activate
 
@@ -24,18 +24,20 @@ pip install -r requirements.txt
 ```
 
 ### Setup necessary API keys and local variables
-```
+```bash
 cp .env_local .env
 vim .env_local
 
 # You will need to provide
 MULTION_API_KEY = '...'
+# You can get it here: https://app.multion.ai/api-keys
+# Read the MultiOn docs: https://docs.multion.ai
 
 # Depending on your use case, you may also need other API keys
 ```
 
 ### Track your stars 
-```
+```bash
 python main.py https://github.com/kingjulio8238/startrack --with-linkedin
 
 # See help for more options and use cases
@@ -59,12 +61,12 @@ python main.py --help
 ```
 
 ### Visualize stargazers 
-```
+```bash
 python dataviz.py
 ```
 
 ### List CSV files with stargazers and preview the most recent ones 
-```
+```bash
 ls data/*
 ls -t data/* | tail -1 | xargs less
 ```

@@ -7,6 +7,7 @@ Track who stars your repository 👀
 
 ## Quickstart 🏁
 [Demo](https://www.loom.com/share/7027cd1849694349b1114d6f79904e9a?sid=224f5b20-14b0-4f89-9ba6-3604c08befa2)
+[Deck](https://www.canva.com/design/DAGO0cfZ7hE/poEGlXL1Q8hHJfnNFcZFCQ/edit)
 
 ### Clone Star Track 
 
@@ -53,9 +54,9 @@ python main.py --help
 #   -h, --help            show this help message and exit
 #   --max-stargazers MAX_STARGAZERS
 #                         Maximum number of stargazers to scrape
+#   -li, --with-linkedin  Scrape LinkedIn profiles
 #   -aops, --with-agentops
 #                         Use Agentops for tracking and reporting agents' actions
-#   -li, --with-linkedin  Scrape LinkedIn profiles
 #   -mem0, --with-mem0    Option to include memory usage for scraping
 #   -kg, --with-neo4j-kg  Option to use Neo4j knowledge graph. Requires --with-mem0
 ```

@@ -178,7 +178,7 @@ config = {'displayModeBar': False}
 plot_div = combined_fig.to_html(full_html=False, include_plotlyjs='cdn', config=config)
 
 # Write the custom HTML to a file
-with open("combined_visualization.html", "w") as f:
+with open("data/combined_visualization.html", "w") as f:
     f.write(custom_html)
 
 #success message 

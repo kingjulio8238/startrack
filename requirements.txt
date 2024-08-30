@@ -4,3 +4,4 @@ mem0ai
 akkio 
 pandas 
 plotly
+mailchimp3

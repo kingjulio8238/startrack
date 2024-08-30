@@ -1,13 +1,16 @@
 import argparse
 from dotenv import load_dotenv
+
+from src.mailchimp_adapter import MailchimpAdapter
 from src.multion_utils import MultiOnUtils
 from src.mem0_utils import MemorySystem
 from src.time_utils import Time
 import csv
+import os
 
 load_dotenv()
 
-def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=False, use_mem0=False, use_neo4j_kg=False):
+def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=False, use_mem0=False, use_neo4j_kg=False, use_mailchimp=False):
     """
     Main function to scrape GitHub and LinkedIn data.
 
@@ -21,6 +24,7 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=Fals
     It prints various debugging messages throughout its execution.
     """
     multion_scraper = MultiOnUtils(use_agentops=use_agentops)
+    mailchimp_adapter = MailchimpAdapter()
     agent_name = "StarTracker"
 
     # Step 1: Scrape repo and stargazers
@@ -101,10 +105,12 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=Fals
 
     # Step 5 Combine data and write to CSV
     print(f"Writing stargazers data to CSV. Number of GitHub users to write: {len(github_user_data)}")
+    # Create the 'data' directory if it doesn't exist
+    os.makedirs('data', exist_ok=True)
 
     csv_filename = f"data/Stargazers_of_{repo.description.replace(' ', '_')[:30]}__{str(Time())}.csv"
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
-        field_names = ['username', 'name', 'location', 'github_followers', 'linkedin_headline', 'current_position',
+        field_names = ['username', 'email', 'name', 'location', 'github_followers', 'linkedin_headline', 'current_position',
                       'linkedin_followers']
         writer = csv.DictWriter(csvfile, fieldnames=field_names)
 
@@ -115,6 +121,7 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=Fals
                 linkedin_profile = linkedin_data.get(user.name)
                 row = {
                     'username': user.name,
+                    'email': user.email or (linkedin_profile.email if linkedin_profile else '') or '',
                     'name': linkedin_profile.name if linkedin_profile else user.name,
                     'location': linkedin_profile.location if linkedin_profile else (user.location or ''),
                     'github_followers': user.num_followers,
@@ -130,6 +137,17 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=Fals
 
     print(f"---\nTotal rows written to {csv_filename}: {row_count}")
 
+    # Step 6 Add emails to mailchimp audience
+    if use_mailchimp:
+        print(f"Adding emails to Mailchimp audience")
+        scraped_emails = [user.email for user in github_user_data if user.email]
+
+        if scraped_emails:
+            print(f"Processing {len(scraped_emails)} emails")
+            mailchimp_adapter.process_emails(scraped_emails, repo.name)
+        else:
+            print("No emails found to process")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape GitHub and LinkedIn data for repository stargazers.")
@@ -141,6 +159,8 @@ if __name__ == "__main__":
                         help="Use Agentops for tracking and reporting agents' actions")
     parser.add_argument("-mem0", "--with-mem0", action="store_true", default=False,
                         help="Option to include memory usage for scraping")
+    parser.add_argument("-mailchimp", "--with-mailchimp", action="store_true", default=False,
+                        help="Option to include adding scraped users to mailchimp audience")
     parser.add_argument("-kg", "--with-neo4j-kg", action="store_true", default=False,
                         help="Option to use Neo4j knowledge graph. Requires --with-mem0")
 
@@ -148,4 +168,4 @@ if __name__ == "__main__":
     if args.with_neo4j_kg and not args.with_mem0:
         parser.error("--with-neo4j-kg requires --with-mem0 to be present")
 
-    main(args.repo_url, args.max_stargazers, args.with_linkedin, args.with_agentops, args.with_mem0, args.with_neo4j_kg)
+    main(args.repo_url, args.max_stargazers, args.with_linkedin, args.with_agentops, args.with_mem0, args.with_neo4j_kg, args.with_mailchimp)

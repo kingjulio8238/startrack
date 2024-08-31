@@ -82,7 +82,7 @@ class MultiOnUtils:
 
         return GitHubUserData(
             name=data.get("name", ""),
-            num_followers=int(data.get("github_followers_count", 0) or 0),
+            num_followers=self._to_int(data.get("github_followers_count", 0)),
             location=data.get("location", ""),
             linkedin_url=data.get("linkedin_url"),
             twitter_url=data.get("twitter_url"),
@@ -125,7 +125,7 @@ class MultiOnUtils:
             name=data.get("name", ""),
             location=data.get("location", ""),
             curr_job=data.get("current_position", ""),
-            num_followers=int(data.get("num_followers", 0) or 0),
+            num_followers=self._to_int(data.get("num_followers", 0)),
             headline = data.get("headline", ""),
             email=data.get("email"),
         )
@@ -179,3 +179,12 @@ class MultiOnUtils:
 
         return stargazers
 
+    def _to_int(self, variable):
+        if isinstance(variable, int):
+            return variable
+        elif isinstance(variable, str):
+            return int(variable.replace(",", ""))
+        elif variable is None:
+            return 0
+        else:
+            raise ValueError("Unsupported type for conversion to int")

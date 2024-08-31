@@ -41,16 +41,18 @@ class MultiOnUtils:
         self.multion_api_key = os.environ.get("MULTION_API_KEY")
         if not self.multion_api_key:
             raise ValueError("MULTION_API_KEY is not set in .env variables\nGet your API key from https://app.multion.ai/api-keys")
-        if use_agentops:
+        if use_agentops == True:
             self.agentops_api_key = os.environ.get("AGENTOPS_API_KEY")
             if not self.agentops_api_key:
                 raise ValueError("AGENTOPS_API_KEY is not set in .env variables\nGet your API key from https://app.agentops.ai/settings/projects")
+            self.client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
         else:
-            self.agentops_api_key=None
+            # If you still get AgentOps unintentionally running here, remove or comment AGENTOPS_API_KEY os variable
+            self.client = MultiOn(api_key=self.multion_api_key)
+
 
     def scrape_github(self, user = "areibman") -> GitHubUserData:
-        client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
-        create_response = client.sessions.create(
+        create_response = self.client.sessions.create(
             url=f"https://github.com/{user}",
             local=True,
 
@@ -58,7 +60,7 @@ class MultiOnUtils:
         print("scraping")
 
         session_id = create_response.session_id
-        retrieve_response = client.retrieve(
+        retrieve_response = self.client.retrieve(
             session_id=session_id,
             cmd="Get name, location, number of repositories, count of contributions in the last year, followers, following count, linkedin url, github url and email",
             fields=["name", "location", "public_repositories", "last_year_contributions_count",
@@ -88,8 +90,7 @@ class MultiOnUtils:
         )
 
     def scrape_linkedin(self, link = "https://www.linkedin.com/in/alex-reibman-67951589") -> LinkedInData:
-        client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
-        create_response = client.sessions.create(
+        create_response = self.client.sessions.create(
             url="https://linkedin.com",
             local=True
         )
@@ -100,13 +101,13 @@ class MultiOnUtils:
         linkedin_url = f"{link}"
 
         while status == "CONTINUE":
-            step_response = client.sessions.step(
+            step_response = self.client.sessions.step(
                 session_id=session_id,
                 cmd=f"Go to {linkedin_url}"
             )
             status = step_response.status
 
-        retrieve_response = client.retrieve(
+        retrieve_response = self.client.retrieve(
             session_id=session_id,
             cmd="Get name, headline, location, current position, profile URL, number of followers and email",
             fields=["name", "headline", "location", "current_position", "profile_url", "num_followers", "email"],
@@ -130,14 +131,13 @@ class MultiOnUtils:
         )
 
     def scrape_repo(self, repo_url: str) -> RepoData:
-        client = MultiOn(api_key=self.multion_api_key, agentops_api_key=self.agentops_api_key)
-        create_response = client.sessions.create(
+        create_response = self.client.sessions.create(
             url=repo_url,
             local=True
         )
 
         session_id = create_response.session_id
-        retrieve_response = client.retrieve(
+        retrieve_response = self.client.retrieve(
             session_id=session_id,
             cmd="Get name, description and number of repo stars",
             fields=["name, description", "number_of_stars"],
@@ -159,9 +159,8 @@ class MultiOnUtils:
         )
 
     def scrape_stargazers(self, repo_url: str) -> List[StargazerData]:
-        client = MultiOn(api_key=self.multion_api_key)
-        create_response = client.sessions.create(url=f"{repo_url}/stargazers", local=True)
-        retrieve_response = client.retrieve(
+        create_response = self.client.sessions.create(url=f"{repo_url}/stargazers", local=True)
+        retrieve_response = self.client.retrieve(
             session_id=create_response.session_id,
             cmd="Get username for all users",
             fields=["username"],

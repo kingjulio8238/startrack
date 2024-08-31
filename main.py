@@ -32,7 +32,7 @@ def main(
     It prints various debugging messages throughout its execution.
     """
     multion_scraper = MultiOnUtils(use_agentops=use_agentops)
-    if use_mailchimp:
+    if use_mailchimp == True:
         mailchimp_adapter = MailchimpAdapter()
     agent_name = "StarTracker"
 
@@ -57,7 +57,7 @@ def main(
 
     # Step 3: Scrape LinkedIn data for users with LinkedIn URLs
     linkedin_data = {}
-    if scrape_linkedin:
+    if scrape_linkedin == True:
         for user in github_user_data:
             if user.linkedin_url:
                 linkedin_profile = multion_scraper.scrape_linkedin(user.linkedin_url)
@@ -70,7 +70,7 @@ def main(
     for user in github_user_data:
         print(user)
 
-    if scrape_linkedin:
+    if scrape_linkedin == True:
         print("\nLinkedIn Data:")
         for name, profile in linkedin_data.items():
             print(f"{name}: {profile}")
@@ -79,13 +79,13 @@ def main(
 
 
     # Step 4 Initialize Mem0 memory
-    if use_mem0:
+    if use_mem0 == True:
         memory_system = MemorySystem()
         memory = memory_system.get_memory()
         # memory.reset()
 
         # Step 4a Memorize stargazers of each repository on a Knowledge Graph
-        if use_neo4j_kg:
+        if use_neo4j_kg == True:
             print(f"Updating knowledge graph")
             repositories = [repo_url]
             # Iterate over the list of repositories
@@ -148,7 +148,7 @@ def main(
     print(f"---\nTotal rows written to {csv_filename}: {row_count}")
 
     # Step 6 Add emails to mailchimp audience
-    if use_mailchimp:
+    if use_mailchimp == True:
         print(f"Adding emails to Mailchimp audience")
         scraped_emails = [user.email for user in github_user_data if user.email]
 

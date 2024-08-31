@@ -10,7 +10,15 @@ import os
 
 load_dotenv()
 
-def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=False, use_mem0=False, use_neo4j_kg=False, use_mailchimp=False):
+def main(
+        repo_url,
+        max_stargazers=None,
+        scrape_linkedin=False,
+        use_agentops=False,
+        use_mem0=False,
+        use_neo4j_kg=False,
+        use_mailchimp=False
+    ):
     """
     Main function to scrape GitHub and LinkedIn data.
 
@@ -24,7 +32,8 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=Fals
     It prints various debugging messages throughout its execution.
     """
     multion_scraper = MultiOnUtils(use_agentops=use_agentops)
-    mailchimp_adapter = MailchimpAdapter()
+    if use_mailchimp:
+        mailchimp_adapter = MailchimpAdapter()
     agent_name = "StarTracker"
 
     # Step 1: Scrape repo and stargazers
@@ -109,6 +118,7 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=Fals
     os.makedirs('data', exist_ok=True)
 
     csv_filename = f"data/Stargazers_of_{repo.description.replace(' ', '_')[:30]}__{str(Time())}.csv"
+    print(f"Saved file: {csv_filename}")
     with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
         field_names = ['username', 'email', 'name', 'location', 'github_followers', 'linkedin_headline', 'current_position',
                       'linkedin_followers']
@@ -152,7 +162,7 @@ def main(repo_url, max_stargazers=None, scrape_linkedin=False, use_agentops=Fals
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape GitHub and LinkedIn data for repository stargazers.")
     parser.add_argument("repo_url", help="URL of the GitHub repository to scrape")
-    parser.add_argument("--max-stargazers", type=int, help="Maximum number of stargazers to scrape")
+    parser.add_argument("-limit","--max-stargazers", type=int, help="Maximum number of stargazers to scrape")
     parser.add_argument("-li","--with-linkedin", action="store_true", default=False,
                         help="Scrape LinkedIn profiles")
     parser.add_argument("-aops","--with-agentops", action="store_true", default=False,

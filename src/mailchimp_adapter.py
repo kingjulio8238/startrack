@@ -11,12 +11,15 @@ load_dotenv()
 
 class MailchimpAdapter:
     def __init__(self):
-        self.api_key = os.environ.get("MAILCHIMP_API_KEY")
+        self.mailchimp_user_id = os.environ.get("MAILCHIMP_USER_ID")
+        print(self.mailchimp_user_id)
+        self.mailchimp_api_key = os.environ.get("MAILCHIMP_API_KEY")
+        print(self.mailchimp_api_key)
         self.list_id = os.environ.get("MAILCHIMP_AUDIENCE_ID")
-        if not self.api_key or not self.list_id:
-            raise ValueError("MAILCHIMP_API_KEY and MAILCHIMP_AUDIENCE_ID must be set in environment variables")
+        if not self.mailchimp_user_id or not self.mailchimp_api_key or not self.list_id:
+            raise ValueError("MAILCHIMP_USER_ID and MAILCHIMP_API_KEY and MAILCHIMP_AUDIENCE_ID must be set in environment variables")
 
-        self.client = MailChimp(mc_api=self.api_key, mc_user='apikey')
+        self.client = MailChimp(mc_api=self.mailchimp_api_key, mc_user=self.mailchimp_user_id)
 
     def process_emails(self, emails, group_name):
         group_id = self.ensure_group(group_name)
@@ -30,6 +33,7 @@ class MailchimpAdapter:
         try:
             logger.info(f"Checking for '{group_name}' group")
             groups = self.client.lists.segments.all(self.list_id, get_all=True)
+            # print(groups)
 
             group = next((group for group in groups['segments'] if group['name'] == group_name), None)
 
@@ -52,12 +56,13 @@ class MailchimpAdapter:
 
     def add_contact(self, email, group_id, group_name):
         try:
-            logger.info(f"Adding contact: {email}")
+            logger.info(f"Adding contact: {email} to audience id {self.list_id}")
             member = self.client.lists.members.create_or_update(self.list_id, email, {
                 'email_address': email,
                 'status_if_new': 'subscribed'
             })
 
+            logger.info(f"Adding contact: {email} to the static segment {group_id}")
             self.client.lists.segments.members.create(self.list_id, group_id, {
                 'email_address': email,
                 'status': member['status']

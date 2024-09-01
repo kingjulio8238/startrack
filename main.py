@@ -151,10 +151,11 @@ def main(
     if use_mailchimp == True:
         print(f"Adding emails to Mailchimp audience")
         scraped_emails = [user.email for user in github_user_data if user.email]
+        segment_name = repo.name
 
         if scraped_emails:
             print(f"Processing {len(scraped_emails)} emails")
-            mailchimp_adapter.process_emails(scraped_emails, repo.name)
+            mailchimp_adapter.process_emails(scraped_emails, f"segment_{segment_name}")
         else:
             print("No emails found to process")
 

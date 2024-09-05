@@ -147,15 +147,15 @@ def main(
 
     print(f"---\nTotal rows written to {csv_filename}: {row_count}")
 
-    # Step 6 Add emails to mailchimp audience
+    # Step 6 Add emails to mailchimp list
     if use_mailchimp == True:
-        print(f"Adding emails to Mailchimp audience")
+        print(f"Adding emails to Mailchimp list")
         scraped_emails = [user.email for user in github_user_data if user.email]
-        segment_name = repo.name
+        tag_name = repo.name
 
         if scraped_emails:
             print(f"Processing {len(scraped_emails)} emails")
-            mailchimp_adapter.process_emails(scraped_emails, f"segment_{segment_name}")
+            mailchimp_adapter.process_emails(scraped_emails, f"tag_{tag_name}")
         else:
             print("No emails found to process")
 
@@ -171,7 +171,7 @@ if __name__ == "__main__":
     parser.add_argument("-mem0", "--with-mem0", action="store_true", default=False,
                         help="Option to include memory usage for scraping")
     parser.add_argument("-mailchimp", "--with-mailchimp", action="store_true", default=False,
-                        help="Option to include adding scraped users to mailchimp audience")
+                        help="Option to include adding scraped users to mailchimp list")
     parser.add_argument("-kg", "--with-neo4j-kg", action="store_true", default=False,
                         help="Option to use Neo4j knowledge graph. Requires --with-mem0")
 
